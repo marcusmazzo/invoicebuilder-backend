@@ -1,0 +1,13 @@
+package com.invoice.enums;
+
+public enum EstadoPedido {
+
+    PEDIDO_CRIADO,
+    ORCAMENTO_CRIADO,
+    ORCAMENTO_ENVIADO,
+    ORCAMENTO_ACEITO,
+    PAGAMENTO_INICIAL_EFETUADO,
+    PAGAMENTO_TOTAL_EFETUADO,
+    CONCLUIDO,
+    CANCELADO;
+}

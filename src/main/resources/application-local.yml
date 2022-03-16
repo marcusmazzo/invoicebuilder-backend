@@ -1,0 +1,46 @@
+server:
+  ssl:
+    enabled: true
+    key-store: src/main/resources/keystore.jks
+    key-store-password: admin00
+    key-store-type: JKS
+    trust-store-type: JKS
+    key-alias: tomcat
+  error:
+    include-message: always
+    include-binding-errors: always
+  port: 8090
+  max-http-header-size: 10MB
+  servlet:
+    context-path: /invoice
+
+#logging:
+#  level:
+#    root: TRACE
+
+security:
+  jwt:
+    token:
+      secret-key: _@urhbKoa))65%&&34#$"!*OKP
+      expire-length: 3000000
+      refresh-expire-length: 3600000
+
+spring:
+  main:
+    allow-circular-references: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  jmx:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/invoice?allowPublicKeyRetrieval=true&sslMode=DISABLED&useSSL=false&serverTimezone=UTC
+    username: root
+    password: password
+
+ignored:    
+    paths: /invoice/login, /invoice/refreshToken, /invoice/empresa/salvar/login
