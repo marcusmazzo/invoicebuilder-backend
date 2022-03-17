@@ -27,6 +27,11 @@ public class PedidoController {
         return ResponseEntity.created(URI.create("http://localhost:8090/pedido/"+pedido.getId())).build();
     }
 
+    @PostMapping(value = "/atualizar", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Pedido> update(@RequestBody Pedido pedido){
+        return ResponseEntity.ok(service.update(pedido));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> getPedido(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));

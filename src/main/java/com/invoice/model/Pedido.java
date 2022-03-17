@@ -71,4 +71,10 @@ public class Pedido {
     @Column(name="numero_pedido")
     private String numeroPedido;
 
+    private Boolean pagamentoComIva;
+
+    private transient String statusPedido;
+
+    private transient BigDecimal valorTotalPago;
+
 }

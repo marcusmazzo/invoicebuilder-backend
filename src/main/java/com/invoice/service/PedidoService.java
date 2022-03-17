@@ -3,6 +3,7 @@ package com.invoice.service;
 import com.invoice.enums.EstadoPedido;
 import com.invoice.model.Cliente;
 import com.invoice.model.Empresa;
+import com.invoice.model.Pagamento;
 import com.invoice.model.Pedido;
 import com.invoice.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,10 @@ public class PedidoService {
 
     @Autowired
     private EmpresaService empresaService;
+
+    public Pedido update(Pedido pedido){
+        return repository.save(pedido);
+    }
 
 
     public Pedido save(Pedido pedido){
@@ -62,16 +67,30 @@ public class PedidoService {
     }
 
     public List<Pedido> findAllByClienteId(Long id){
-        return repository.findAllByClienteIdOrderByIdDesc(id);
+
+        List<Pedido> pedidos = repository.findAllByClienteIdOrderByIdDesc(id);
+        pedidos.stream().forEach(pedido -> pedido.setStatusPedido(pedido.getEstadoPedido().getDescricao()));
+        return pedidos;
     }
 
     public Pedido findById(Long id){
-        return repository.findById(id).get();
+        Pedido pedido = repository.findById(id).get();
+        pedido.setStatusPedido(pedido.getEstadoPedido().getDescricao());
+        return pedido;
     }
 
     public List<Pedido> findAllByEstadoPedido(Boolean concluido){
         Empresa empresa = empresaService.findById(Long.parseLong(MDC.get("empresa")));
-        return repository.findAllByEmpresaAndConcluido(empresa, concluido);
+        List<Pedido> pedidos = repository.findAllByEmpresaAndConcluido(empresa, concluido);
+        pedidos.stream().forEach(pedido -> {
+            pedido.setStatusPedido(pedido.getEstadoPedido().getDescricao());
+            BigDecimal valorTotalPago = BigDecimal.ZERO;
+            for (Pagamento pagamento : pedido.getPagamentos()) {
+                valorTotalPago = valorTotalPago.add(pagamento.getValorRecebido());
+            }
+            pedido.setValorTotalPago(valorTotalPago);
+        });
+        return pedidos;
     }
 
 }

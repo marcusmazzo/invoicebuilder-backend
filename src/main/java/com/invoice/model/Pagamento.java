@@ -32,4 +32,12 @@ public class Pagamento {
     @Column(name="data_pagamento")
     private Date dataPagamento;
 
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
 }
