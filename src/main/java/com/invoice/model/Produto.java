@@ -34,4 +34,7 @@ public class Produto {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
+    @Column(columnDefinition = "TEXT")
+    private String garantia;
+
 }

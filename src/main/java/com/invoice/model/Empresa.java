@@ -38,6 +38,9 @@ public class Empresa {
     @Column(columnDefinition = "TEXT")
     private String informacoes;
 
+    @Column(columnDefinition = "TEXT")
+    private String textoRecibo;
+
     @OneToOne
     private User user;
 

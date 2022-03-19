@@ -13,6 +13,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,26 +30,27 @@ public class CaixaService {
     private final PedidoService pedidoService;
 
     public Pagamento salvar(Pagamento pagamento) {
-        List<Pagamento> pagamentos = findAllByPedido(pagamento.getPedido().getId());
         Pedido pedido = pedidoService.findById(pagamento.getPedido().getId());
-        BigDecimal valorPago = BigDecimal.ZERO;
-        for (Pagamento pag: pagamentos) {
-            valorPago = valorPago.add(pag.getValorRecebido());
-        }
-        valorPago = valorPago.add(pagamento.getValorRecebido());
-        if(ObjectUtils.isEmpty(pagamento.getPedido().getPagamentoComIva())) {
-            valorPago = valorPago.add(valorPago.multiply(pagamento.getCliente().getEmpresa().getPercentualIva()).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR));
+        Long numero = repository.maxNumero(pedido.getId());
+
+        BigDecimal valorPago = repository.sumValorRecebido(pedido.getId()).add(pagamento.getValorRecebido());
+        BigDecimal valorPedido = pedido.getValorTotalPedido();
+
+        if(!ObjectUtils.isEmpty(pagamento.getPedido().getPagamentoComIva()) && pagamento.getPedido().getPagamentoComIva()) {
+            valorPedido = valorPedido.add(valorPedido.multiply(pagamento.getCliente().getEmpresa().getPercentualIva()).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR));
         }
 
-        if(valorPago.compareTo(pedido.getValorTotalPedido()) > 0){
+        if(valorPago.compareTo(valorPedido) > 0){
             throw new IllegalArgumentException("Os Valores pagos não podem ser superiores ao valor total do pedido");
-        } else if(valorPago.compareTo(pedido.getValorTotalPedido()) == 0 || pagamento.getValorRecebido().compareTo(pedido.getValorTotalPedido()) == 0){
+        } else if(valorPago.compareTo(valorPedido) == 0 || pagamento.getValorRecebido().compareTo(pedido.getValorTotalPedido()) == 0){
             pedido.setEstadoPedido(EstadoPedido.PAGAMENTO_TOTAL_EFETUADO);
         } else {
             pedido.setEstadoPedido(EstadoPedido.PAGAMENTO_INICIAL_EFETUADO);
         }
 
         pagamento.setEmpresa(empresaService.findById(Long.parseLong(MDC.get("empresa"))));
+        pagamento.setNumero(numero == null ? 1L : numero+1);
+        pagamento.setNumeroPagamento(pagamento.getNumero()+"/"+ Calendar.getInstance().get(Calendar.YEAR));
         pedidoService.update(pedido);
         return repository.save(pagamento);
     }
@@ -62,7 +64,9 @@ public class CaixaService {
     }
 
     public Pagamento findById(Long id) {
-        return repository.findById(id).get();
+        Pagamento pagamento = repository.findById(id).get();
+        pagamento.setPedidoPagamento(pagamento.getPedido().getId());
+        return pagamento;
     }
 
     public List<Pagamento> findAllByCliente(Long cliente) {

@@ -22,7 +22,11 @@ public class ItemPedido {
 
     private String produto;
 
+    @Column(columnDefinition = "TEXT")
     private String descricaoProduto;
+
+    @Column(columnDefinition = "TEXT")
+    private String garantia;
 
     @ManyToOne
     @JoinColumn(name="pedido_id")

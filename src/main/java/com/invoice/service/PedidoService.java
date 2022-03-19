@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class PedidoService {
             pedido.setCliente(clienteService.findById(pedido.getCliente().getId()));
         }
         pedido.setEmpresa(empresaService.findById(Long.parseLong(MDC.get("empresa"))));
+        Long numero = repository.maxNumero(pedido.getEmpresa().getId());
 
         pedido.getItens().forEach(item -> {
             if(item.getValorVenda() == null) {
@@ -58,12 +60,10 @@ public class PedidoService {
         pedido.setTotalItensPedido(BigInteger.valueOf(pedido.getItens().size()));
         pedido.setCustoTotalPedido(pedido.getItens().stream().map(item -> item.getCustoFabricacao().multiply(new BigDecimal(item.getQuantidade()))).reduce((a, b) -> a.add(b)).get());
         pedido.setValorTotalPedido(pedido.getItens().stream().map(item -> item.getValorVenda().multiply(new BigDecimal(item.getQuantidade()))).reduce((a, b) -> a.add(b)).get());
-        Long numero = repository.maxNumero(pedido.getEmpresa().getId());
+        pedido.setValorTotalPedidoIva(pedido.getValorTotalPedido().add(pedido.getValorTotalPedido().multiply(pedido.getEmpresa().getPercentualIva()).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR)));
         pedido.setNumero(numero == null ? 1L : numero+1L);
         pedido.setNumeroPedido(pedido.getNumero()+"/"+Calendar.getInstance().get(Calendar.YEAR));
-        pedido = repository.save(pedido);
-
-        return pedido;
+        return repository.save(pedido);
     }
 
     public List<Pedido> findAllByClienteId(Long id){

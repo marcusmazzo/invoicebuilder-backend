@@ -61,4 +61,11 @@ public class EmpresaService {
         empresa = repository.save(empresa);
         return empresa;
     }
+
+    public Empresa saveTextoRecibo(String information) {
+        Empresa empresa = repository.findById(Long.parseLong(MDC.get("empresa"))).get();
+        empresa.setTextoRecibo(information);
+        empresa = repository.save(empresa);
+        return empresa;
+    }
 }

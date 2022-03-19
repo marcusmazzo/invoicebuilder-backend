@@ -39,6 +39,11 @@ public class EmpresaController {
         return ResponseEntity.ok().body(service.saveInformation(empresa.getInformacoes()));
     }
 
+    @PostMapping("/salvar-recibo")
+    public ResponseEntity<Empresa> saveRecibo(@RequestBody Empresa empresa){
+        return ResponseEntity.ok().body(service.saveTextoRecibo(empresa.getTextoRecibo()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Empresa> getCliente(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));

@@ -49,6 +49,9 @@ public class Pedido {
     @Column(name="valor_total_pedido")
     private BigDecimal valorTotalPedido;
 
+    @Column(name="valor_total_pedido_iva")
+    private BigDecimal valorTotalPedidoIva;
+
     @OneToMany(mappedBy = "pedido")
     @JsonManagedReference
     private List<Pagamento> pagamentos;
