@@ -22,8 +22,8 @@ public interface CaixaRepository extends JpaRepository<Pagamento, Long> {
 
     List<Pagamento> findAllByPedido(Pedido byId);
 
-    @Query(nativeQuery = true, value = "select max(numero) from pagamento where pedido_id = :pedido")
-    Long maxNumero(@Param("pedido") Long id);
+    @Query(nativeQuery = true, value = "select max(numero) from pagamento")
+    Long maxNumero();
 
     @Query(nativeQuery = true, value = "select coalesce(null, sum(valor_pagamento), 0) from pagamento where pedido_id = :pedido")
     BigDecimal sumValorRecebido(@Param("pedido") Long id);

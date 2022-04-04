@@ -13,7 +13,7 @@ public interface VisitaRepository extends JpaRepository<Visita, Long> {
 
     List<Visita> findAllByCliente(Cliente cliente);
 
-    List<Visita> findAllByStatusVisitaAndCliente_Empresa_id(StatusVisita statusVisita, Long empresaId);
+    List<Visita> findAllByStatusVisitaAndCliente_Empresa_idOrderByDataVisita(StatusVisita statusVisita, Long empresaId);
 
-    List<Visita> findAllByCliente_Empresa_id(Long empresaId);
+    List<Visita> findAllByCliente_Empresa_idOrderByDataVisita(Long empresaId);
 }

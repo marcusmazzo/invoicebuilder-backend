@@ -1,12 +1,12 @@
 package com.invoice.service;
 
 import com.invoice.enums.EstadoPedido;
-import com.invoice.model.Cliente;
+import com.invoice.exception.PagamentoEmFaltaException;
 import com.invoice.model.Empresa;
 import com.invoice.model.Pagamento;
 import com.invoice.model.Pedido;
+import com.invoice.repository.CaixaRepository;
 import com.invoice.repository.PedidoRepository;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,6 +29,9 @@ public class PedidoService {
 
     @Autowired
     private EmpresaService empresaService;
+
+    @Autowired
+    private CaixaRepository caixaService;
 
     public Pedido update(Pedido pedido){
         return repository.save(pedido);
@@ -63,6 +67,7 @@ public class PedidoService {
         pedido.setValorTotalPedidoIva(pedido.getValorTotalPedido().add(pedido.getValorTotalPedido().multiply(pedido.getEmpresa().getPercentualIva()).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR)));
         pedido.setNumero(numero == null ? 1L : numero+1L);
         pedido.setNumeroPedido(pedido.getNumero()+"/"+Calendar.getInstance().get(Calendar.YEAR));
+        pedido.setPagamentoComIva(Boolean.FALSE);
         return repository.save(pedido);
     }
 
@@ -91,6 +96,17 @@ public class PedidoService {
             pedido.setValorTotalPago(valorTotalPago);
         });
         return pedidos;
+    }
+
+    public Pedido finalizarPedido(Long id) throws PagamentoEmFaltaException {
+        Pedido pedido = findById(id);
+        BigDecimal totalRecebido = caixaService.sumValorRecebido(pedido.getId());
+        if(totalRecebido.compareTo(pedido.getPagamentoComIva() ? pedido.getValorTotalPedidoIva() : pedido.getValorTotalPedido()) < 0){
+            throw new PagamentoEmFaltaException("O pedido ainda não foi completamente pago");
+        }
+        pedido.setEstadoPedido(EstadoPedido.CONCLUIDO);
+        pedido.setDataEntrega(new Date());
+        return repository.save(pedido);
     }
 
 }

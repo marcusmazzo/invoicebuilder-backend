@@ -29,4 +29,6 @@ public class Visita {
     @Enumerated(EnumType.STRING)
     private StatusVisita statusVisita;
 
+    private transient String descricaoStatusVisita;
+
 }

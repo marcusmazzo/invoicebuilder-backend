@@ -1,6 +1,5 @@
 package com.invoice.model;
 
-import com.invoice.enums.TipoProduto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +23,8 @@ public class Produto {
     @Column(columnDefinition = "TEXT", name="descricao_completa")
     private String descricaoCompleta;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "tipo_produto_id")
     private TipoProduto tipoProduto;
 
     @Column(name="custo_medio")

@@ -31,7 +31,7 @@ public class CaixaService {
 
     public Pagamento salvar(Pagamento pagamento) {
         Pedido pedido = pedidoService.findById(pagamento.getPedido().getId());
-        Long numero = repository.maxNumero(pedido.getId());
+        Long numero = repository.maxNumero();
 
         BigDecimal valorPago = repository.sumValorRecebido(pedido.getId()).add(pagamento.getValorRecebido());
         BigDecimal valorPedido = pedido.getValorTotalPedido();
@@ -76,4 +76,9 @@ public class CaixaService {
     public List<Pagamento> findAllByPedido(Long id) {
         return repository.findAllByPedido(pedidoService.findById(id));
     }
+
+    public BigDecimal valoresRecebidosPedido(Pedido pedido){
+        return repository.sumValorRecebido(pedido.getId());
+    }
+
 }

@@ -27,7 +27,7 @@ public class DocumentoService {
         Documentos documento = Documentos
                 .builder()
                 .pedido(pedido)
-                .nomeDocumento("contrato.pdf")
+                .nomeDocumento(file.getOriginalFilename())
                 .empresa(empresaService.findById(Long.parseLong(MDC.get("empresa"))))
                 .cliente(pedido.getCliente())
                 .documento(file.getInputStream().readAllBytes())

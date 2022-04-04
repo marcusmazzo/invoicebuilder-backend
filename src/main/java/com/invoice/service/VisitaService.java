@@ -52,7 +52,9 @@ public class VisitaService {
 
     public List<Visita> findAll(){
         Empresa empresa = empresaService.findById(Long.parseLong(MDC.get("empresa")));
-        return repository.findAllByCliente_Empresa_id(empresa.getId());
+        List<Visita> lista = repository.findAllByCliente_Empresa_idOrderByDataVisita(empresa.getId());;
+        lista.forEach(visita -> visita.setDescricaoStatusVisita(visita.getStatusVisita().getDescricao()));
+        return lista;
     }
 
     public Visita findById(Long idVisita) {
@@ -61,7 +63,7 @@ public class VisitaService {
 
     public Visita confirmarVisita(Long visitaId) {
         Visita visita = findById(visitaId);
-        visita.setStatusVisita(StatusVisita.VISITADO);
+        visita.setStatusVisita(StatusVisita.EM_CURSO);
         return repository.save(visita);
     }
 
@@ -73,6 +75,8 @@ public class VisitaService {
 
     private List<Visita> findAllByStatus(StatusVisita statusVisita){
         Empresa empresa = empresaService.findById(Long.parseLong(MDC.get("empresa")));
-        return repository.findAllByStatusVisitaAndCliente_Empresa_id(statusVisita, empresa.getId());
+        List<Visita> lista = repository.findAllByStatusVisitaAndCliente_Empresa_idOrderByDataVisita(statusVisita, empresa.getId());
+        lista.forEach(visita -> visita.setDescricaoStatusVisita(visita.getStatusVisita().getDescricao()));
+        return lista;
     }
 }

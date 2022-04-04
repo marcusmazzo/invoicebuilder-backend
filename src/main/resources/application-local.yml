@@ -9,7 +9,7 @@ server:
   error:
     include-message: always
     include-binding-errors: always
-  port: 8090
+  port: 9000
   max-http-header-size: 10MB
   servlet:
     context-path: /invoice

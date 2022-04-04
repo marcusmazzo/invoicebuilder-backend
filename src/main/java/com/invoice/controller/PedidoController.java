@@ -1,5 +1,6 @@
 package com.invoice.controller;
 
+import com.invoice.exception.PagamentoEmFaltaException;
 import com.invoice.model.Cliente;
 import com.invoice.model.Pedido;
 import com.invoice.service.ClienteService;
@@ -35,6 +36,11 @@ public class PedidoController {
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> getPedido(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
+    }
+
+    @GetMapping("/finalizar/{id}")
+    public ResponseEntity<Pedido> finalizarPedido(@PathVariable("id") Long id) throws PagamentoEmFaltaException {
+        return ResponseEntity.status(HttpStatus.OK).body(service.finalizarPedido(id));
     }
 
     @GetMapping("/cliente/{id}")
