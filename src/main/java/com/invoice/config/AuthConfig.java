@@ -29,7 +29,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.requiresChannel(channel -> channel.anyRequest().requiresSecure())
 		   .httpBasic().disable()
 		   .csrf().disable()
 		   .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
