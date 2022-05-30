@@ -1,11 +1,14 @@
 package com.invoice.service;
 
 import com.invoice.enums.EstadoPedido;
+import com.invoice.enums.TipoDocumento;
 import com.invoice.exception.PagamentoEmFaltaException;
+import com.invoice.model.Documentos;
 import com.invoice.model.Empresa;
 import com.invoice.model.Pagamento;
 import com.invoice.model.Pedido;
 import com.invoice.repository.CaixaRepository;
+import com.invoice.repository.DocumentoRepository;
 import com.invoice.repository.PedidoRepository;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PedidoService {
@@ -33,12 +34,15 @@ public class PedidoService {
     @Autowired
     private CaixaRepository caixaService;
 
+    @Autowired
+    private DocumentoRepository documentoRepository;
+
     public Pedido update(Pedido pedido){
         return repository.save(pedido);
     }
 
 
-    public Pedido save(Pedido pedido){
+    public Pedido   save(Pedido pedido){
         if(pedido.getCliente().getId() == null){
             pedido.setCliente(clienteService.save(pedido.getCliente()));
         } else {
@@ -81,6 +85,11 @@ public class PedidoService {
     public Pedido findById(Long id){
         Pedido pedido = repository.findById(id).get();
         pedido.setStatusPedido(pedido.getEstadoPedido().getDescricao());
+
+        List<Documentos> list = documentoRepository.findAllByPedidoAndTipoDocumento(pedido, TipoDocumento.IMAGEM);
+        list.forEach(documento -> documento.setContratoBase64(Base64.getEncoder().encodeToString(documento.getDocumento())));
+        pedido.setImagens(list);
+
         return pedido;
     }
 
@@ -88,6 +97,7 @@ public class PedidoService {
         Empresa empresa = empresaService.findById(Long.parseLong(MDC.get("empresa")));
         List<Pedido> pedidos = repository.findAllByEmpresaAndConcluido(empresa, concluido);
         pedidos.stream().forEach(pedido -> {
+            pedido.setEmpresa(empresa);
             pedido.setStatusPedido(pedido.getEstadoPedido().getDescricao());
             BigDecimal valorTotalPago = BigDecimal.ZERO;
             for (Pagamento pagamento : pedido.getPagamentos()) {

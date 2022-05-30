@@ -1,5 +1,7 @@
 package com.invoice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.invoice.enums.TipoDocumento;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,9 +29,13 @@ public class Documentos {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pedido_id")
+    @JsonBackReference
     private Pedido pedido;
 
     private String nomeDocumento;
+
+    @Enumerated(EnumType.STRING)
+    private TipoDocumento tipoDocumento;
 
     @Lob
     private byte[] documento;

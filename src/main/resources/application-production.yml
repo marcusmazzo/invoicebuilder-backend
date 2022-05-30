@@ -1,7 +1,15 @@
 server:
-  port: 8090
+  error:
+    include-message: always
+    include-binding-errors: always
+  port: 9000
+  max-http-header-size: 10MB
   servlet:
     context-path: /invoice
+
+#logging:
+#  level:
+#    root: TRACE
 
 security:
   jwt:
@@ -11,6 +19,8 @@ security:
       refresh-expire-length: 3600000
 
 spring:
+  main:
+    allow-circular-references: true
   jpa:
     show-sql: true
     hibernate:
@@ -21,9 +31,9 @@ spring:
   jmx:
     enabled: false
   datasource:
-    url: jdbc:mysql://localhost:3306/invoice?allowPublicKeyRetrieval=true&sslMode=DISABLED&useSSL=false&serverTimezone=UTC
-    username: root
-    password: password
+    url: jdbc:mysql://vps-034abdfe.vps.ovh.net:3306/invoice?allowPublicKeyRetrieval=true&sslMode=DISABLED&useSSL=false&serverTimezone=UTC
+    username: invoice
+    password: qNAte6p?WIitih!FOjhf
 
 ignored:
-  paths: /invoice/login, /invoice/refreshToken, /invoice/save
+  paths: /invoice/login, /invoice/refreshToken, /invoice/empresa/salvar/login

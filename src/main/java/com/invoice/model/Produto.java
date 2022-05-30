@@ -37,4 +37,6 @@ public class Produto {
     @Column(columnDefinition = "TEXT")
     private String garantia;
 
+    private Boolean exigeDimensao;
+
 }

@@ -80,4 +80,6 @@ public class Pedido {
 
     private transient BigDecimal valorTotalPago;
 
+    private transient List<Documentos> imagens;
+
 }

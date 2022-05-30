@@ -3,7 +3,6 @@ package com.invoice.service;
 import com.invoice.model.Cliente;
 import com.invoice.model.Empresa;
 import com.invoice.repository.ClienteRepository;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,6 @@ public class ClienteService {
 
     @Autowired
     private EmpresaService empresaService;
-
-    @Autowired
-    private PedidoService pedidoService;
 
     @Autowired
     private ClienteRepository repository;

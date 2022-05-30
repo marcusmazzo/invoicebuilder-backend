@@ -24,7 +24,22 @@ public class FileController {
         List<Documentos> list = new ArrayList<>();
         files.forEach(file -> {
             try {
-                list.add(documentoService.salvarDocumento(Long.parseLong(pedidoId), file));
+                list.add(documentoService.salvarDocumentoOrcamento(Long.parseLong(pedidoId), file));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return list;
+    }
+
+    @PostMapping("/imagem")
+    public List<Documentos> uploadFileOrcamento(@RequestHeader("Authorization") String token,
+                                       @RequestPart("pedido") String pedidoId,
+                                       @RequestPart("files") List<MultipartFile> files){
+        List<Documentos> list = new ArrayList<>();
+        files.forEach(file -> {
+            try {
+                list.add(documentoService.salvarImagemOrcamento(Long.parseLong(pedidoId), file));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -35,5 +50,10 @@ public class FileController {
     @GetMapping("/pedido/{id}")
     public ResponseEntity<List<Documentos>> findAll(@PathVariable("id") Long idPedido){
         return ResponseEntity.ok(documentoService.findAllByPedido(idPedido));
+    }
+
+    @GetMapping("/pedido/{id}/imagem")
+    public ResponseEntity<List<Documentos>> findAllImages(@PathVariable("id") Long idPedido){
+        return ResponseEntity.ok(documentoService.findAllImagesByPedido(idPedido));
     }
 }

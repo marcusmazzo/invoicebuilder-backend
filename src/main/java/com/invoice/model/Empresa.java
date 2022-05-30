@@ -53,5 +53,9 @@ public class Empresa {
     @Column(name="percentual_iva")
     private BigDecimal percentualIva;
 
+    private String currencySymbol;
+
+    private String country;
+
     private transient String logotipoBase64;
 }
